@@ -27,7 +27,6 @@
 
     <!-- Load Custom CSS Start -->
     <!--<Deject>--><script>loadCSS( "header.min.css?ver=1.0.0", false, "all" );</script><!--</Deject>-->
-    <script>loadCSS( "libs/material/material-design-lite.css", false, "all" );</script>
     <script>loadCSS( "css/style.min.css?ver=1.0.0", false, "all" );</script>
     <script>loadCSS( "libs/font-awesome-4.6.3/css/font-awesome.min.css", false, "all" );</script>
     <!-- Load Custom CSS End -->
@@ -62,21 +61,59 @@
         <ul class="current-weather-body">
             <li>{{currentWeatherItem.name}}</li>
             <li>{{currentWeatherItem.main.temp}}</li>
+            <li>Обновлено: {{currentWeatherItem.lastUpdate |readeableDate}}</li>
+            <!--<time-checker></time-checker>-->
         </ul>
+
+        <button class="btn btn--refresh" @click="updateWeatherItem(currentWeatherItem)">Обновить</button>
     </div>
+
     <div class="currentWeather" v-if="historyWeather">
         <h1>История погоды</h1>
-        <ul class="town-list" v-for="item in historyWeather">
-            <li>{{item.name}}</li>
-            <li>{{item.main.temp}}</li>
-        </ul>
+        <div class="town-list" >
+            <div class="town-item" v-for="item in historyWeather">
+                <ul>
+                    <li>{{item.name}}</li>
+                    <li>{{item.main.temp}}</li>
+                    <li>Обновлено: {{item.lastUpdate |readeableDate}}</li>
+                </ul>
+
+                <button class="btn btn--refresh" @click="updateWeatherItem(item)">Обновить</button> <button class="btn btn--delete" @click="removeWeatherItem(item)">Удалить</button>
+            </div>
+            <!--<time-checker></time-checker>-->
+        </div>
     </div>
     <!--<my-component></my-component>-->
+    <modal v-if="showModal" @close="showModal = false" :message.sync="message"></modal>
 </div>
 
-<div id="demo">
 
-</div>
+<!-- template for the modal component -->
+<script type="text/x-template" id="modal-template">
+    <transition name="modal" >
+        <div class="modal-mask">
+            <div class="modal-wrapper">
+                <div class="modal-container">
+
+                    <div class="modal-body">
+                        <slot name="body" >
+                            {{message}}
+                        </slot>
+                    </div>
+
+                    <div class="modal-footer">
+                        <slot name="footer">
+
+                            <button class="modal-default-button" @click="$emit('close')">
+                                OK
+                            </button>
+                        </slot>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </transition>
+</script>
 
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <script src="js/main.js"></script>
