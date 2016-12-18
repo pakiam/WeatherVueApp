@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>VueWeatherApp</title>
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -33,7 +33,7 @@
 
     <!-- Load Custom CSS Compiled without JS Start -->
     <noscript>
-        <link rel="stylesheet" href="css/main.min.css">
+        <link rel="stylesheet" href="css/style.min.css">
         <link rel="stylesheet" href="libs/font-awesome-4.6.3/css/font-awesome.min.css">
     </noscript>
     <!-- Load Custom CSS Compiled without JS End -->
@@ -49,41 +49,58 @@
 </head>
 <body>
 
-<div id="app">
+<div id="app" v-cloak>
+    <div class="row">
 
-    <form action="" class="form" v-on:submit.prevent="getWeatherByTownName">
-        <input v-model="townName" placeholder="Insert town name" type="text">
-        <button type="submit">Add new town</button>
-    </form>
+        <div class="medium-12 column">
+            <form action="" class="form" v-on:submit.prevent="getWeatherByTownName">
+                <input v-model="townName" class="input" placeholder="Введите название города" type="text">
+                <button type="submit" class="btn">Добавить город</button>
+            </form>
+        </div>
 
-    <div class="currentWeather" v-if="currentWeatherItem">
-        <h1>Текущая погода</h1>
-        <ul class="current-weather-body">
-            <li>{{currentWeatherItem.name}}</li>
-            <li>{{currentWeatherItem.main.temp}}</li>
-            <li>Обновлено: {{currentWeatherItem.lastUpdate |readeableDate}}</li>
-            <!--<time-checker></time-checker>-->
-        </ul>
+        <div class="medium-12 columns">
+            <div class="row">
+                <div class="medium-3 column">
+                    <div class="currentWeather town-item" v-if="currentWeatherItem">
+                        <h1>Текущая погода</h1>
+                        <div class="current-weather-body town-item-body">
+                            <div class="town-item-body_prop">{{currentWeatherItem.name}}</div>
+                            <div class="town-item-body_prop"><span>Температура: </span>{{currentWeatherItem.main.temp | deg}}</div>
 
-        <button class="btn btn--refresh" @click="updateWeatherItem(currentWeatherItem)">Обновить</button>
-    </div>
+                            <div class="town-item-body_updated">Обновлено: {{currentWeatherItem.lastUpdate |readeableDate}}</div>
+                            <div class="town-item-body_footer">
+                                <button class="btn btn--refresh" @click="updateWeatherItem(currentWeatherItem)">Обновить</button>
+                            </div>
 
-    <div class="currentWeather" v-if="historyWeather">
-        <h1>История погоды</h1>
-        <div class="town-list" >
-            <div class="town-item" v-for="item in historyWeather">
-                <ul>
-                    <li>{{item.name}}</li>
-                    <li>{{item.main.temp}}</li>
-                    <li>Обновлено: {{item.lastUpdate |readeableDate}}</li>
-                </ul>
+                        </div>
+                    </div>
+                </div>
 
-                <button class="btn btn--refresh" @click="updateWeatherItem(item)">Обновить</button> <button class="btn btn--delete" @click="removeWeatherItem(item)">Удалить</button>
-            </div>
-            <!--<time-checker></time-checker>-->
+                    <div class="medium-9 columns">
+                        <div class="currentWeather" v-if="historyWeather">
+                            <h1>Ваши города</h1>
+                            <div class="town-list">
+                                <div class="row">
+                                    <div class="town-item medium-3 column" v-for="item in historyWeather">
+                                        <div class="town-item-body">
+                                            <div class="town-item-body_prop">{{item.name}}</div>
+                                            <div class="town-item-body_prop"><span>Температура: </span>{{item.main.temp | deg}}</div>
+                                            <div class="town-item-body_updated">Обновлено: {{item.lastUpdate |readeableDate}}</div>
+                                            <div class="town-item-body_footer">
+                                            <button class="btn btn--refresh" @click="updateWeatherItem(item)">Обновить</button> <button class="btn btn--delete" @click="removeWeatherItem(item)">Удалить</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--<time-checker></time-checker>-->
+                            </div>
+                        </div>
+                    </div>
+        </div>
         </div>
     </div>
-    <!--<my-component></my-component>-->
+
     <modal v-if="showModal" @close="showModal = false" :message.sync="message"></modal>
 </div>
 
@@ -91,7 +108,7 @@
 <!-- template for the modal component -->
 <script type="text/x-template" id="modal-template">
     <transition name="modal" >
-        <div class="modal-mask">
+        <div class="modal-mask" @click.prevent="$emit('close')">
             <div class="modal-wrapper">
                 <div class="modal-container">
 
@@ -104,7 +121,7 @@
                     <div class="modal-footer">
                         <slot name="footer">
 
-                            <button class="modal-default-button" @click="$emit('close')">
+                            <button class="btn" >
                                 OK
                             </button>
                         </slot>
