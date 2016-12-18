@@ -52,17 +52,17 @@
 <div id="app" v-cloak>
     <div class="row">
 
-        <div class="medium-12 column">
+        <div class="small-12 medium-12 column">
             <form action="" class="form" v-on:submit.prevent="getWeatherByTownName">
                 <input v-model="townName" class="input" placeholder="Введите название города" type="text">
                 <button type="submit" class="btn">Добавить город</button>
             </form>
         </div>
 
-        <div class="medium-12 columns">
+        <div class="small-12 medium-12 columns">
             <div class="row">
-                <div class="medium-3 column">
-                    <div class="currentWeather town-item" v-if="currentWeatherItem">
+                <div class="small-12 medium-3 column">
+                    <div class="weather-box town-item" v-if="currentWeatherItem">
                         <h1>Текущая погода</h1>
                         <div class="current-weather-body town-item-body">
                             <div class="town-item-body_prop">{{currentWeatherItem.name}}</div>
@@ -77,12 +77,12 @@
                     </div>
                 </div>
 
-                    <div class="medium-9 columns">
-                        <div class="currentWeather" v-if="historyWeather">
+                    <div class="small-12 medium-9 columns">
+                        <div class="weather-box" v-if="historyWeather">
                             <h1>Ваши города</h1>
                             <div class="town-list">
                                 <div class="row">
-                                    <div class="town-item medium-3 column" v-for="item in historyWeather">
+                                    <div class="town-item small-6 medium-3 column" v-for="item in historyWeather">
                                         <div class="town-item-body">
                                             <div class="town-item-body_prop">{{item.name}}</div>
                                             <div class="town-item-body_prop"><span>Температура: </span>{{item.main.temp | deg}}</div>
