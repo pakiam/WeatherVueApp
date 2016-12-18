@@ -51,16 +51,27 @@
 <body>
 
 <div id="app">
-    <button v-on:click="getLocation">Показать погоду</button>
-    <p class="commit">{{ newWeatherItem.name }}</p>
-    <div class="items-list" v-if="weatherItems">
-        <ul v-for="item in weatherItems">
-            <li>
-                <p class="commit">{{ item.name }}</p>
-            </li>
-            <li><p class="message">{{ item.main.temp }}</p></li>
+
+    <form action="" class="form" v-on:submit.prevent="getWeatherByTownName">
+        <input v-model="townName" placeholder="Insert town name" type="text">
+        <button type="submit">Add new town</button>
+    </form>
+
+    <div class="currentWeather" v-if="currentWeatherItem">
+        <h1>Текущая погода</h1>
+        <ul class="current-weather-body">
+            <li>{{currentWeatherItem.name}}</li>
+            <li>{{currentWeatherItem.main.temp}}</li>
         </ul>
     </div>
+    <div class="currentWeather" v-if="historyWeather">
+        <h1>История погоды</h1>
+        <ul class="town-list" v-for="item in historyWeather">
+            <li>{{item.name}}</li>
+            <li>{{item.main.temp}}</li>
+        </ul>
+    </div>
+    <!--<my-component></my-component>-->
 </div>
 
 <div id="demo">

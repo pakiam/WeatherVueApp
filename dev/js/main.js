@@ -15,14 +15,19 @@ var weatherStorage = {
 };
 
 var app = new Vue({
-    el: '#app',
     data: {
-        weatherItems: weatherStorage.fetch(),
-        newWeatherItem: {}
+        historyWeather: weatherStorage.fetch(),
+        currentWeatherItem: null,
+        newWeatherItem: {},
+        townName: '',
+        APIKey: '&appid=53c5355561ad2a2cd18efeac886352f3',
+        lastUpdate: '',
+        units: '&units=metric'
     },
 
+
     watch: {
-        weatherItems: {
+        historyWeather: {
             handler: function (weatherItems) {
                 weatherStorage.save(weatherItems);
             },
@@ -30,28 +35,50 @@ var app = new Vue({
         }
     },
     created: function () {
-        if (this.weatherItems.length==0 || undefined){
-            this.getLocation()
-        }
+        // if (this.weatherItems.length==0 || undefined){
+        this.getLocation()
+
     },
     methods: {
+
+        getLocation: function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(this.getCurrentWeather);
+            } else {
+                document.createElement('p').setAttribute('class', 'warning').innerHTML = "Geolocation is not supported by this browser.";
+            }
+        },
+
+        getCurrentWeather: function (position) {
+            var self = this;
+
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+            console.log(lat);
+            console.log(lon);
+            var APIUrl = 'http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon;
+
+            var units = '&units=metric';
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", APIUrl + this.APIKey + units, true);
+            xhr.responseType = "json";
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    self.currentWeatherItem = this.response;
+                }
+            };
+            xhr.send();
+        },
 
         addWeatherItem: function () {
             var value = this.newWeatherItem;
             if (!value) {
                 return
             }
-            this.weatherItems.push(this.newWeatherItem);
+            this.historyWeather.push(this.newWeatherItem);
             this.newWeatherItem = {}
         },
 
-        getLocation: function () {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(this.showPosition);
-            } else {
-                document.createElement('p').setAttribute('class', 'warning').innerHTML = "Geolocation is not supported by this browser.";
-            }
-        },
         showPosition: function (position) {
             var self = this;
 
@@ -60,10 +87,23 @@ var app = new Vue({
             console.log(lat);
             console.log(lon);
             var APIUrl = 'http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon;
-            var APIKey = '&appid=53c5355561ad2a2cd18efeac886352f3';
-            var units = '&units=metric';
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", APIUrl + APIKey + units, true);
+            xhr.open("GET", APIUrl + this.APIKey + this.units, true);
+            xhr.responseType = "json";
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    self.newWeatherItem = this.response;
+                    self.addWeatherItem();
+                }
+            };
+            xhr.send();
+        },
+        getWeatherByTownName: function () {
+            var self = this;
+
+            var APIUrl = 'http://api.openweathermap.org/data/2.5/weather?q=' + this.townName + this.APIKey+this.units;
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", APIUrl, true);
             xhr.responseType = "json";
             xhr.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
@@ -73,6 +113,7 @@ var app = new Vue({
             };
             xhr.send();
         }
-
     }
 });
+
+app.$mount('#app');
