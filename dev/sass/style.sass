@@ -1,3 +1,19 @@
+@import "variables"
+@import 'normalize/import-now'
+@import 'font-awesome'
+@import 'settings/settings'
+$global-font-size: 62.5%
+$grid-row-width: 120rem
+@import "foundation"
+@include foundation-flex-grid
+@include foundation-flex-classes
+@include foundation-visibility-classes
+
+*, *:after, *:before
+  box-sizing: border-box
+
+@import "header"
+
 /*** MODAL-WINDOW ***/
 
 
